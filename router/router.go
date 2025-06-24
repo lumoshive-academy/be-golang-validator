@@ -12,7 +12,7 @@ func NewRouter(handler handler.Handler) *chi.Mux {
 	r.Post("/login", handler.AuthHandler.Login)
 
 	r.Route("/student", func(r chi.Router) {
-		r.Get("/listassignment", handler.AssignmentHandler.ListAssignments)
+		r.Get("/assignments", handler.AssignmentHandler.ListAssignments)
 		r.Post("/submit", handler.AssignmentHandler.SubmitAssignment)
 	})
 

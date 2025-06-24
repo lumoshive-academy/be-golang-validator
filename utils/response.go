@@ -2,6 +2,7 @@ package utils
 
 import (
 	"encoding/json"
+	"go-23/dto"
 	"net/http"
 )
 
@@ -30,7 +31,7 @@ func ResponseSuccess(w http.ResponseWriter, code int, message string, data any) 
 
 func ResponseBadRequest(w http.ResponseWriter, code int, message string) {
 	response := Reponse{
-		Status:  true,
+		Status:  false,
 		Message: message,
 	}
 	w.Header().Set("Content-Type", "application/json")
@@ -40,8 +41,20 @@ func ResponseBadRequest(w http.ResponseWriter, code int, message string) {
 
 func ResponseBadRequest2(w http.ResponseWriter, code int, message any) {
 	response := Reponse2{
-		Status:  true,
+		Status:  false,
 		Message: message,
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(code)
+	json.NewEncoder(w).Encode(response)
+}
+
+func ResponsePagination(w http.ResponseWriter, code int, message string, data any, pagination dto.Pagination) {
+	response := map[string]interface{}{
+		"status":     true,
+		"message":    message,
+		"data":       data,
+		"pagination": pagination,
 	}
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(code)

@@ -1,14 +1,12 @@
 package handler
 
 import (
-	"encoding/json"
 	"fmt"
 	"go-23/model"
 	"go-23/service"
+	"go-23/utils"
 	"net/http"
 	"strconv"
-
-	"github.com/go-chi/chi/v5"
 )
 
 type AssignmentHandler struct {
@@ -22,47 +20,22 @@ func NewAssignmentHandler(server service.Service) AssignmentHandler {
 }
 
 func (assignmentHandler *AssignmentHandler) ListAssignments(w http.ResponseWriter, r *http.Request) {
-	userID, err := strconv.Atoi(chi.URLParam(r, "id"))
+	page, err := strconv.Atoi(r.URL.Query().Get("page"))
 	if err != nil {
-		http.Error(w, "Invalid user ID", http.StatusBadRequest)
+		utils.ResponseBadRequest(w, http.StatusBadRequest, "Invalid page")
 		return
 	}
 
-	// Ambil data assignments dari service
-	assignments, err := assignmentHandler.Service.AssignmentService.GetAllAssignments()
+	limit := 5
+
+	// Get data assignment form service all assignment
+	assignments, pagination, err := assignmentHandler.Service.AssignmentService.GetAllAssignments(page, limit)
 	if err != nil {
-		http.Error(w, "Failed to fetch assignments: "+err.Error(), http.StatusInternalServerError)
+		utils.ResponseBadRequest(w, http.StatusInternalServerError, "Failed to fetch assignments: "+err.Error())
 		return
 	}
 
-	// Ambil data user (student) untuk menampilkan namanya
-	student, err := assignmentHandler.Service.UserService.GetUserByID(userID)
-	if err != nil {
-		http.Error(w, "Failed to fetch student data", http.StatusInternalServerError)
-		return
-	}
-
-	// Kirim ke template
-	data := struct {
-		StudentName string
-		Assignments []model.Assignment
-	}{
-		StudentName: student.Name,
-		Assignments: assignments,
-	}
-
-	var response = struct {
-		Status  bool
-		Message string
-		Data    any
-	}{
-		Status:  false,
-		Message: "invalid Email or Password",
-		Data:    data,
-	}
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(response)
-
+	utils.ResponsePagination(w, http.StatusOK, "success get data", assignments, *pagination)
 }
 
 func (assignmentHandler *AssignmentHandler) SubmitAssignment(w http.ResponseWriter, r *http.Request) {

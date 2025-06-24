@@ -9,7 +9,7 @@ import (
 type AssignmentRepository interface {
 	Create(assignment *model.Assignment) error
 	FindByID(id int) (*model.Assignment, error)
-	FindAll() ([]model.Assignment, error)
+	FindAll(page, limit int) ([]model.Assignment, int, error)
 	Update(assignment *model.Assignment) error
 	Delete(id int) error
 }
@@ -48,15 +48,28 @@ func (r *assignmentRepository) FindByID(id int) (*model.Assignment, error) {
 	return &a, err
 }
 
-func (r *assignmentRepository) FindAll() ([]model.Assignment, error) {
+func (r *assignmentRepository) FindAll(page, limit int) ([]model.Assignment, int, error) {
+	offset := (page - 1) * limit
+
+	// get total data for pagination
+	var total int
+	countQuery := `SELECT COUNT(*) FROM assignments WHERE deleted_at IS NULL`
+	err := r.db.QueryRow(countQuery).Scan(&total)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	// get data with pagination
 	query := `
 		SELECT id, created_at, updated_at, deleted_at, course_id, lecturer_id, title, description, deadline
-		FROM assignments WHERE deleted_at IS NULL
+		FROM assignments
+		WHERE deleted_at IS NULL
 		ORDER BY deadline ASC
+		LIMIT $1 OFFSET $2
 	`
-	rows, err := r.db.Query(query)
+	rows, err := r.db.Query(query, limit, offset)
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 	defer rows.Close()
 
@@ -68,11 +81,12 @@ func (r *assignmentRepository) FindAll() ([]model.Assignment, error) {
 			&a.CourseID, &a.LecturerID, &a.Title, &a.Description, &a.Deadline,
 		)
 		if err != nil {
-			return nil, err
+			return nil, 0, err
 		}
 		assignments = append(assignments, a)
 	}
-	return assignments, nil
+
+	return assignments, total, nil
 }
 
 func (r *assignmentRepository) Update(a *model.Assignment) error {

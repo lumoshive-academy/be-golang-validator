@@ -2,6 +2,7 @@ package service
 
 import (
 	"fmt"
+	"go-23/dto"
 	"go-23/model"
 	"go-23/repository"
 	"io"
@@ -11,7 +12,7 @@ import (
 )
 
 type AssignmentService interface {
-	GetAllAssignments() ([]model.Assignment, error)
+	GetAllAssignments(page, limit int) (*[]model.Assignment, *dto.Pagination, error)
 	SubmitAssignment(studentID, assignmentID int, file multipart.File, fileHeader *multipart.FileHeader) (string, error)
 	GetGradeFormData() ([]model.User, []model.Assignment, error)
 	GetAssignmentByID(id int) (*model.Assignment, error)
@@ -25,8 +26,19 @@ func NewAssignmentService(repo repository.Repository) AssignmentService {
 	return &assignmentService{Repo: repo}
 }
 
-func (s *assignmentService) GetAllAssignments() ([]model.Assignment, error) {
-	return s.Repo.AssignmentRepo.FindAll()
+func (s *assignmentService) GetAllAssignments(page, limit int) (*[]model.Assignment, *dto.Pagination, error) {
+	assignments, total, err := s.Repo.AssignmentRepo.FindAll(page, limit)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	pagination := dto.Pagination{
+		CurrentPage:  page,
+		Limit:        limit,
+		TotalPages:   totalPage(limit, int64(total)),
+		TotalRecords: total,
+	}
+	return &assignments, &pagination, nil
 }
 
 func (s *assignmentService) GetAssignmentByID(id int) (*model.Assignment, error) {
@@ -83,15 +95,15 @@ func (s *assignmentService) SubmitAssignment(studentID, assignmentID int, file m
 }
 
 func (s *assignmentService) GetGradeFormData() ([]model.User, []model.Assignment, error) {
-	students, err := s.Repo.UserRepo.FindAllStudents()
-	if err != nil {
-		return nil, nil, err
-	}
+	// students, err := s.Repo.UserRepo.FindAllStudents()
+	// if err != nil {
+	// 	return nil, nil, err
+	// }
 
-	assignments, err := s.Repo.AssignmentRepo.FindAll()
-	if err != nil {
-		return nil, nil, err
-	}
+	// assignments, err := s.Repo.AssignmentRepo.FindAll()
+	// if err != nil {
+	return nil, nil, nil
+	// }
 
-	return students, assignments, nil
+	// return students, assignments, nil
 }
