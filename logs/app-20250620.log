@@ -1,0 +1,10 @@
+{"L":"INFO","timestamp":"2025-06-20T21:27:40.132+0700","C":"repository/user.go:52","M":"Repository User","query":"\n\t\tSELECT id, created_at, updated_at, deleted_at, name, email, password, role\n\t\tFROM users\n\t\tWHERE emails = $1 AND deleted_at IS NULL\n\t"}
+{"L":"ERROR","timestamp":"2025-06-20T21:27:40.132+0700","C":"service/auth.go:31","M":"Service auth","error":"pq: column \"emails\" does not exist"}
+{"L":"INFO","timestamp":"2025-06-20T22:03:26.513+0700","C":"repository/user.go:52","M":"Repository User","query":"\n\t\tSELECT id, created_at, updated_at, deleted_at, name, email, password, role\n\t\tFROM users\n\t\tWHERE email = $1 AND deleted_at IS NULL\n\t"}
+{"L":"INFO","timestamp":"2025-06-20T22:03:45.223+0700","C":"repository/user.go:52","M":"Repository User","query":"\n\t\tSELECT id, created_at, updated_at, deleted_at, name, email, password, role\n\t\tFROM users\n\t\tWHERE email = $1 AND deleted_at IS NULL\n\t"}
+{"L":"ERROR","timestamp":"2025-06-20T22:03:45.223+0700","C":"service/auth.go:31","M":"Service auth","error":"sql: no rows in result set"}
+{"L":"INFO","timestamp":"2025-06-20T22:04:18.463+0700","C":"repository/user.go:52","M":"Repository User","query":"\n\t\tSELECT id, created_at, updated_at, deleted_at, name, email, password, role\n\t\tFROM users\n\t\tWHERE email = $1 AND deleted_at IS NULL\n\t"}
+{"L":"ERROR","timestamp":"2025-06-20T22:04:18.463+0700","C":"service/auth.go:31","M":"Service auth","error":"sql: no rows in result set"}
+{"L":"INFO","timestamp":"2025-06-20T22:04:49.339+0700","C":"repository/user.go:52","M":"Repository User","query":"\n\t\tSELECT id, created_at, updated_at, deleted_at, name, email, password, role\n\t\tFROM users\n\t\tWHERE email = $1 AND deleted_at IS NULL\n\t"}
+{"L":"ERROR","timestamp":"2025-06-20T22:04:49.340+0700","C":"service/auth.go:31","M":"Service auth","error":"sql: no rows in result set"}
+{"L":"INFO","timestamp":"2025-06-20T22:04:55.024+0700","C":"repository/user.go:52","M":"Repository User","query":"\n\t\tSELECT id, created_at, updated_at, deleted_at, name, email, password, role\n\t\tFROM users\n\t\tWHERE email = $1 AND deleted_at IS NULL\n\t"}
